@@ -1,8 +1,8 @@
-import { Login } from './pages';
+import { PublicRoutes } from './router';
 
 function App() {
   return (
-    <Login />
+    <PublicRoutes />
   );
 }
 
