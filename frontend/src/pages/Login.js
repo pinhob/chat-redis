@@ -9,7 +9,7 @@ const Login = () => {
 
   return (
     <>
-      <h1>Login</h1>
+      <h1>Entrar como:</h1>
       <button onClick={() => handleClick("technician")}>Técnico</button>
       <button onClick={() => handleClick("attendant")}>Atendente</button>
     </>
