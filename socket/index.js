@@ -22,17 +22,31 @@ io.on('connection', (socket) => {
   console.log(`Socket conectado: ${socket.id}`);
 
 
-  // create a room when the event "createRoom" is recevied and create a channel in redis
+  // TODO: adicionar pub/sub do redis para a troca de mensagens entre os usuários
   socket.on('createRoom', (room) => {
-    console.log(`Criando sala: ${room}`);
     socket.join(room);
+    sub.subscribe(room, (err, count) => {
+      if (err) throw new Error('Erro na criação da sala. Evento createRoom');
+      console.log(`Criada sala ${room}.`);
+    });
   });
 
   socket.on('joinRoom', (room) => {
-    console.log(`Entrando na sala: ${room}`);
     socket.join(room);
-    socket.broadcast.to(room).emit('newUser', 'Novo usuário conectado');
+    sub.subscribe(room);
+    pub.publish(room, `${socket.id} entrou`);
   });
+
+  sub.on("message", (channel, message) => {
+    console.log(`mensagem: ${message} publicada no canal ${channel}`);
+    console.log(`---`)
+    socket.broadcast.emit("message", message);
+  });
+
+  socket.on("message", (message) => {
+    console.log("object:", message);
+    pub.publish("dani", message.message);
+  })
 });
 
 // server start

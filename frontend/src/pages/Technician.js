@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { MessageTextField } from "../components";
 import { socket } from '../connections';
 
 const Technician = () => {
@@ -6,7 +7,11 @@ const Technician = () => {
     socket.connect();
 
     socket.on('connect', () => {
-      console.log('Socket conectado', socket.id);
+      console.log('Técnico conectado', socket.id);
+    });
+
+    socket.on('message', (message) => {
+      console.log(message);
     });
 
     socket.emit('createRoom', 'dani');
@@ -16,14 +21,11 @@ const Technician = () => {
     }
   }, []);
 
-  useEffect(() => {
-    socket.on('newUser', (data) => {
-      console.log(data);
-    });
-  }, []);
-
   return (
-    <h1>Technician!</h1>
+    <>
+      <h1>Technician!</h1>
+      <MessageTextField />
+    </>
   )
 };
 
