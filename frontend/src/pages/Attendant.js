@@ -1,8 +1,13 @@
-import { useEffect } from "react";
-import { MessageTextField } from "../components";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { MessagesList, MessageTextField } from "../components";
 import { socket } from "../connections";
 
+
 const Attendant = () => {
+  const [messages, setMessages] = useState([]);
+  const { state: user } = useLocation();
+
   useEffect(() => {
     socket.connect();
 
@@ -10,8 +15,10 @@ const Attendant = () => {
       console.log('Atendente conectado', socket.id);
     });
 
-    socket.on('message', (message) => {
-      console.log("Atendente recebeu: ", message);
+    socket.on('message', (newMessage) => {
+      console.log("Atendente recebeu: ", newMessage);
+      setMessages((prevMsgs) => [...prevMsgs, newMessage]);
+      console.log("msgs", messages)
     });
 
     socket.emit('joinRoom', 'dani');
@@ -24,7 +31,8 @@ const Attendant = () => {
   return (
     <>
       <h1>Attendant!</h1>
-      {/* <MessageTextField /> */}
+      <MessagesList messages={messages} />
+      <MessageTextField user={user} />
     </>
   )
 };

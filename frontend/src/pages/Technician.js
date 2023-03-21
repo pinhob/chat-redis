@@ -1,8 +1,13 @@
-import { useEffect } from "react";
-import { MessageTextField } from "../components";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { MessagesList, MessageTextField } from "../components";
 import { socket } from '../connections';
 
 const Technician = () => {
+  const [messages, setMessages] = useState([]);
+  const { state: user } = useLocation();
+
+
   useEffect(() => {
     socket.connect();
 
@@ -10,8 +15,9 @@ const Technician = () => {
       console.log('Técnico conectado', socket.id);
     });
 
-    socket.on('message', (message) => {
-      console.log(message);
+    socket.on('message', (newMessage) => {
+      console.log("Técnico recebeu: ", newMessage);
+      setMessages((prevMsgs) => [...prevMsgs, newMessage]);
     });
 
     socket.emit('createRoom', 'dani');
@@ -24,7 +30,8 @@ const Technician = () => {
   return (
     <>
       <h1>Technician!</h1>
-      <MessageTextField />
+      <MessagesList messages={messages} />
+      <MessageTextField user={user} />
     </>
   )
 };

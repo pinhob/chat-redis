@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { socket } from "../connections";
 
-const MessageTextField = () => {
+const MessageTextField = ({ user }) => {
   const [message, setMessage] = useState('');
 
   const handleSendMessage = (e) => {
@@ -11,11 +11,11 @@ const MessageTextField = () => {
 
     const newMessage = {
       message,
-      from: 'technician',
+      from: user.name,
       time: `${currentTime.getHours()}:${currentTime.getMinutes()}`
     }
 
-    socket.emit('message', newMessage);
+    socket.emit('sendMessage', newMessage);
   };
 
 

@@ -21,8 +21,7 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
   console.log(`Socket conectado: ${socket.id}`);
 
-
-  // TODO: adicionar pub/sub do redis para a troca de mensagens entre os usuários
+  //  handle rooms events
   socket.on('createRoom', (room) => {
     socket.join(room);
     sub.subscribe(room, (err, count) => {
@@ -34,19 +33,25 @@ io.on('connection', (socket) => {
   socket.on('joinRoom', (room) => {
     socket.join(room);
     sub.subscribe(room);
-    pub.publish(room, `${socket.id} entrou`);
+    // pub.publish(room, `${socket.id} entrou`);
   });
 
-  sub.on("message", (channel, message) => {
+  // handle messages events
+  socket.on("sendMessage", (message) => {
+    console.log("object:", message);
+
+    // explanation to why convert the object to string: https://stackoverflow.com/a/64087456
+    const serializedMessage = JSON.stringify(message);
+    pub.publish("dani", serializedMessage);
+  })
+
+  // handle redis receveid sub messages
+  sub.on("message", (channel, serializedMessage) => {
+    const message = JSON.parse(serializedMessage);
     console.log(`mensagem: ${message} publicada no canal ${channel}`);
     console.log(`---`)
     socket.broadcast.emit("message", message);
   });
-
-  socket.on("message", (message) => {
-    console.log("object:", message);
-    pub.publish("dani", message.message);
-  })
 });
 
 // server start
