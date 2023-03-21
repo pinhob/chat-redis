@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { socket } from "../connections";
+import { socket } from "../../connections";
 
 const MessageTextField = ({ user }) => {
   const [message, setMessage] = useState('');
